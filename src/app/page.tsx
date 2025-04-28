@@ -104,8 +104,9 @@ function RepoDetailClient({ owner, name }: { owner: string, name: string }) {
 
 // Import RSCs and other components needed by the Server Component
 import ContributorLeaderboard from "@/components/contributors/ContributorLeaderboard";
-import ContributorHeatmap from "@/components/metrics/ContributorHeatmap"; // Import Heatmap
-import React from "react"; 
+import ContributorHeatmap from "@/components/metrics/ContributorHeatmap";
+import IssueVelocityChart from "@/components/metrics/IssueVelocityChart"; // Import Issue Velocity Chart
+import React from "react";
 
 // Default export is now a Server Component
 export default function Home() {
@@ -122,15 +123,16 @@ export default function Home() {
         Monitoring the heartbeat of Open Source, in real-time.
       </p>
 
-      {/* Render the Client Component part */}
+      {/* Render the Client Component part (Repo Details + Basic Metrics) */}
       <RepoDetailClient owner={owner} name={name} />
 
-      {/* Render the Heatmap Client Component */}
-      {/* Since it fetches its own data client-side, no Suspense needed here */}
-      <div className="my-12"> {/* Add margin */} 
+      {/* Render Advanced Metrics (Client Components fetching own data) */}
+      <div className="my-12 grid grid-cols-1 gap-12"> {/* Grid for advanced metrics */}
         <ContributorHeatmap repoOwner={owner} repoName={name} />
+        <IssueVelocityChart repoOwner={owner} repoName={name} />
+        {/* TODO: Add Release Cadence chart here */}
       </div>
-      
+
       {/* Render the Leaderboard Server Component */}
       <React.Suspense fallback={<LeaderboardSkeleton />}>
         <ContributorLeaderboard repoOwner={owner} repoName={name} />

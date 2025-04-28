@@ -60,4 +60,40 @@ export const GET_REPOSITORY_COMMITS = gql`
       }
     }
   }
+`;
+
+// Query to fetch issues created/closed recently for velocity calculation
+export const GET_ISSUES_FOR_VELOCITY = gql`
+  query GetIssuesForVelocity(
+    $owner: String!
+    $name: String!
+    $since: DateTime!
+    $first: Int = 100 # Adjust pagination as needed
+    $cursor: String
+  ) {
+    repository(owner: $owner, name: $name) {
+      id
+      # Fetch issues created since the start date
+      createdIssues: issues(
+        first: $first
+        after: $cursor
+        filterBy: { since: $since }
+        orderBy: { field: CREATED_AT, direction: ASC }
+      ) {
+        totalCount
+        pageInfo {
+          endCursor
+          hasNextPage
+        }
+        nodes {
+          id
+          createdAt
+          closedAt
+          state # To know if it was closed
+        }
+      }
+      # Separate query for closed issues might be more efficient depending on API limits
+      # But fetching all since a date and filtering might be simpler initially
+    }
+  }
 `; 
