@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Define base colors here if needed, or rely on Tailwind defaults */
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+/* Optional: Dark mode color variables if needed */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  /* Apply the Inter font variable from layout.tsx */
+  font-family: var(--font-inter), sans-serif;
+  /* Remove default color/background here, apply on body tag in layout.tsx */
+}
+
+/* Add other global styles or overrides below */
