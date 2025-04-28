@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import ApolloProviderWrapper from "@/components/providers/ApolloProviderWrapper";
+import ProviderWrapper from "@/components/providers/ApolloProviderWrapper";
 import Header from "@/components/layout/Header";
 import "./globals.css";
 
@@ -20,14 +20,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body className="bg-neutral-100 font-sans antialiased">
-        <ApolloProviderWrapper>
+        <ProviderWrapper>
           <Header />
           <main className="min-h-screen p-6 md:p-8">
             {/* TODO: Add Header/Navbar Component Here */} 
             {children}
             {/* TODO: Add Footer Component Here */} 
           </main>
-        </ApolloProviderWrapper>
+        </ProviderWrapper>
       </body>
     </html>
   );

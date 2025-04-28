@@ -1,5 +1,9 @@
 import Link from "next/link";
 import React from "react";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // Import authOptions
+import AuthButton from "./AuthButton"; // We will create this client component next
+import Image from "next/image"; // Import Image for user avatar
 
 // Simple placeholder Logo component
 const Logo = () => (
@@ -8,29 +12,47 @@ const Logo = () => (
   </Link>
 );
 
-// Simple placeholder Nav component
-const Nav = () => (
-  <nav className="flex space-x-4">
-    {/* Placeholder links - will expand later */}
-    <Link href="/" className="text-neutral-600 hover:text-primary transition-colors">
-      Dashboard
-    </Link>
-    <Link href="/about" className="text-neutral-600 hover:text-primary transition-colors">
-      About
-    </Link>
-    {/* Placeholder for Auth Button */}
-    <button className="bg-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-dark transition-colors">
-      Login
-    </button>
-  </nav>
-);
+// Make Header an async component to fetch session
+export default async function Header() {
+  // Fetch session data on the server
+  const session = await getServerSession(authOptions);
 
-export default function Header() {
   return (
-    <header className="bg-neutral-50 shadow-sm sticky top-0 z-10">
+    <header className="bg-neutral-50 shadow-sm sticky top-0 z-10 border-b border-neutral-200">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <Logo />
-        <Nav />
+        <nav className="flex items-center space-x-4">
+          {/* Placeholder links */}
+          <Link href="/" className="text-neutral-600 hover:text-primary transition-colors">
+            Dashboard
+          </Link>
+          <Link href="/about" className="text-neutral-600 hover:text-primary transition-colors">
+            About
+          </Link>
+
+          {/* Auth Section */}
+          {session?.user ? (
+            <div className="flex items-center space-x-3">
+              {session.user.image && (
+                <Image
+                  src={session.user.image}
+                  alt={session.user.name || "User Avatar"}
+                  width={32}
+                  height={32}
+                  className="rounded-full border border-neutral-300"
+                />
+              )}
+              <span className="text-sm text-neutral-700 hidden md:inline">
+                {session.user.name || session.user.email}
+              </span>
+              {/* Sign Out Button (uses Client Component) */}
+              <AuthButton action="signout" />
+            </div>
+          ) : (
+            // Sign In Button (uses Client Component)
+            <AuthButton action="signin" />
+          )}
+        </nav>
       </div>
     </header>
   );

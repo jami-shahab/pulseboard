@@ -2,13 +2,18 @@
 "use client";
 
 import { ApolloProvider } from "@apollo/client";
-import apolloClient from "@/lib/apollo/client"; // Using the alias we configured
+import { SessionProvider } from "next-auth/react";
+import apolloClient from "@/lib/apollo/client";
 import React from "react";
 
-interface ApolloProviderWrapperProps {
+interface ProviderWrapperProps {
   children: React.ReactNode;
 }
 
-export default function ApolloProviderWrapper({ children }: ApolloProviderWrapperProps) {
-  return <ApolloProvider client={apolloClient}>{children}</ApolloProvider>;
+export default function ProviderWrapper({ children }: ProviderWrapperProps) {
+  return (
+    <SessionProvider>
+      <ApolloProvider client={apolloClient}>{children}</ApolloProvider>
+    </SessionProvider>
+  );
 } 
