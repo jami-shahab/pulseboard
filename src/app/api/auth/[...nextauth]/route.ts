@@ -1,6 +1,9 @@
 import NextAuth from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import type { AuthOptions } from "next-auth"; // Import AuthOptions type
+import type { JWT } from "next-auth/jwt"; // Import JWT type
+import type { Session } from "next-auth"; // Import Session type
+import type { Account } from "next-auth"; // Import Account type
 
 // Ensure environment variables are available
 const githubClientId = process.env.GITHUB_CLIENT_ID;
@@ -24,35 +27,51 @@ if (!nextAuthSecret) {
   }
 }
 
+// Extend Session and JWT types to include accessToken
+declare module "next-auth" {
+  interface Session {
+    accessToken?: string;
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    accessToken?: string;
+  }
+}
+
 export const authOptions: AuthOptions = {
   // Configure one or more authentication providers
   providers: [
     GithubProvider({
       clientId: githubClientId,
       clientSecret: githubClientSecret,
-      // Request specific scopes needed later for private repo access
-      // For now, default scopes are usually fine for basic login
-      // scope: "repo read:user user:email",
+      // Request scopes needed for private repo access and user info
+      authorization: {
+        params: { scope: "repo read:user user:email" }, // Added 'repo' scope
+      },
     }),
     // ...add more providers here if needed
   ],
   // The secret is used to sign cookies and tokens
   secret: nextAuthSecret,
-  // Optional: Add callbacks for customizing behavior (e.g., saving tokens)
-  // callbacks: {
-  //   async jwt({ token, account }) {
-  //     // Persist the OAuth access_token to the token right after signin
-  //     if (account) {
-  //       token.accessToken = account.access_token;
-  //     }
-  //     return token;
-  //   },
-  //   async session({ session, token }) {
-  //     // Send properties to the client, like an access_token
-  //     session.accessToken = token.accessToken;
-  //     return session;
-  //   },
-  // },
+  // Callbacks to control session and JWT content
+  callbacks: {
+    // This callback is called whenever a JWT is created or updated.
+    async jwt({ token, account }: { token: JWT; account: Account | null }): Promise<JWT> {
+      // Persist the OAuth access_token to the token right after signin
+      if (account?.access_token) {
+        token.accessToken = account.access_token;
+      }
+      return token;
+    },
+    // This callback is called whenever a session is checked.
+    async session({ session, token }: { session: Session; token: JWT }): Promise<Session> {
+      // Send the accessToken property to the client session
+      session.accessToken = token.accessToken;
+      return session;
+    },
+  },
   // Optional: Add custom pages if needed
   // pages: {
   //   signIn: '/auth/signin',

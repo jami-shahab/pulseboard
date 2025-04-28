@@ -1,5 +1,6 @@
 import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
+import { getSession } from "next-auth/react";
 
 // Ensure environment variables are defined
 const githubApiUrl = process.env.NEXT_PUBLIC_GITHUB_GRAPHQL_ENDPOINT;
@@ -15,7 +16,7 @@ if (!githubPat) {
   // This check mainly helps during development if the .env.local is missing/misconfigured.
   // In production builds, this variable should ideally always be present.
   console.warn(
-    "Apollo Client Warning: GITHUB_PAT environment variable is not set. GitHub API requests will be unauthorized and subject to stricter rate limits."
+    "Apollo Client Warning: GITHUB_PAT environment variable is not set. Logged-out GitHub API requests will be unauthorized and subject to stricter rate limits."
   );
 }
 
@@ -24,15 +25,26 @@ const httpLink = createHttpLink({
   uri: githubApiUrl,
 });
 
-// Create an authentication link to add the Authorization header
-const authLink = setContext((_, { headers }) => {
-  // Get the authentication token from the environment variable.
+// Modify authLink to dynamically use user token or fallback PAT
+const authLink = setContext(async (_, { headers }) => {
+  // Get the user session
+  const session = await getSession();
+
+  let token: string | undefined;
+
+  // Use the user's access token if available in the session
+  if (session?.accessToken) {
+    token = session.accessToken;
+  } else {
+    // Otherwise, fall back to the application's PAT (for public data)
+    token = githubPat;
+  }
+
   // Return the headers to the context so httpLink can read them
   return {
     headers: {
       ...headers,
-      // Only add the authorization header if the PAT exists
-      authorization: githubPat ? `Bearer ${githubPat}` : "",
+      authorization: token ? `Bearer ${token}` : "",
     },
   };
 });
