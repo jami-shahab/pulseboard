@@ -23,37 +23,40 @@ export default function Home() {
   });
 
   return (
-    <div className="container mx-auto py-10">
-      <h1 className="text-4xl font-bold text-center mb-8">
+    <div className="container mx-auto py-10 animate-fade-in">
+      <h1 className="text-4xl font-bold text-center mb-2 text-neutral-800">
         Welcome to Pulseboard
       </h1>
-      <p className="text-lg text-center text-gray-600 mb-10">
+      <p className="text-lg text-center text-neutral-600 mb-12">
         Monitoring the heartbeat of Open Source, in real-time.
       </p>
 
-      {/* Display fetched data */}
-      <div className="mt-10 max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl">
+      {/* Styled Data Card */}
+      <div className="max-w-md mx-auto bg-white rounded-xl shadow-lg overflow-hidden md:max-w-2xl border border-neutral-200">
         <div className="p-8">
-          <h2 className="uppercase tracking-wide text-sm text-indigo-500 font-semibold mb-1">
+          <h2 className="uppercase tracking-wide text-sm text-primary font-semibold mb-1">
             Example Repo Data (facebook/react)
           </h2>
-          {loading && <p className="text-gray-500">Loading repository data...</p>}
+          {loading && <p className="text-neutral-500 animate-pulse">Loading repository data...</p>}
           {error && (
-            <p className="text-red-600">
-              Error fetching data: {error.message}
-            </p>
+            <div className="mt-4 p-4 bg-red-100 border border-red-300 rounded-md">
+              <p className="text-sm font-medium text-secondary-dark">
+                Error Fetching Data
+              </p>
+              <p className="text-sm text-secondary-dark mt-1">{error.message}</p>
+            </div>
           )}
           {data && data.repository && (
-            <div>
-              <p className="block mt-1 text-lg leading-tight font-medium text-black">
+            <div className="animate-bubble-pop">
+              <p className="block mt-1 text-xl leading-tight font-semibold text-neutral-800">
                 {data.repository.nameWithOwner}
               </p>
-              <p className="mt-2 text-gray-500">{data.repository.description}</p>
-              <div className="mt-4 flex justify-between text-sm text-gray-600">
+              <p className="mt-2 text-neutral-600">{data.repository.description}</p>
+              <div className="mt-5 pt-4 border-t border-neutral-200 flex flex-wrap justify-between gap-4 text-sm text-neutral-500">
                 <span>⭐ {data.repository.stargazerCount.toLocaleString()} stars</span>
                 <span>🍴 {data.repository.forkCount.toLocaleString()} forks</span>
                 <span>
-                   viimeksi päivitetty:{" "}
+                  Last updated:{" "}
                   {new Date(data.repository.pushedAt).toLocaleDateString()}
                 </span>
               </div>
