@@ -96,4 +96,37 @@ export const GET_ISSUES_FOR_VELOCITY = gql`
       # But fetching all since a date and filtering might be simpler initially
     }
   }
+`;
+
+// Query to fetch recent releases for cadence calculation
+export const GET_RELEASES = gql`
+  query GetReleases(
+    $owner: String!
+    $name: String!
+    $first: Int = 50 # Fetch last 50 releases initially
+    $cursor: String
+    $orderBy: ReleaseOrderField = CREATED_AT # Order by creation time
+    $direction: OrderDirection = DESC
+  ) {
+    repository(owner: $owner, name: $name) {
+      id
+      releases(
+        first: $first
+        after: $cursor
+        orderBy: { field: $orderBy, direction: $direction }
+      ) {
+        pageInfo {
+          endCursor
+          hasNextPage
+        }
+        nodes {
+          id
+          tagName
+          publishedAt
+          isPrerelease
+          isDraft
+        }
+      }
+    }
+  }
 `; 

@@ -4,6 +4,7 @@ import { GET_ISSUES_FOR_VELOCITY } from "@/graphql/queries";
 import dayjs from "dayjs"; // Using dayjs for easier date manipulation
 import weekOfYear from "dayjs/plugin/weekOfYear";
 import isoWeek from "dayjs/plugin/isoWeek"; // Use isoWeek for consistency
+import { ApolloQueryResult } from "@apollo/client"; // Import ApolloQueryResult
 
 dayjs.extend(weekOfYear);
 dayjs.extend(isoWeek);
@@ -19,6 +20,20 @@ interface WeeklyVelocity {
   weekStartDate: string; // YYYY-MM-DD format, start of the ISO week (Monday)
   opened: number;
   closed: number;
+}
+
+interface IssuesQueryData {
+  repository: {
+    id: string;
+    createdIssues: {
+      totalCount: number;
+      pageInfo: {
+        endCursor: string | null;
+        hasNextPage: boolean;
+      };
+      nodes: IssueNode[];
+    } | null;
+  } | null;
 }
 
 // Function to get the start date of the ISO week (Monday)
@@ -48,11 +63,14 @@ export async function GET(
 
     // Basic pagination loop (might need refinement for very large repos)
     while (hasNextPage) {
-      const { data, error: queryError } = await apolloClient.query({
+      const queryResult: ApolloQueryResult<IssuesQueryData> = await apolloClient.query<IssuesQueryData>({
         query: GET_ISSUES_FOR_VELOCITY,
-        variables: { owner, name, since: sinceDate, first: 100, cursor }, // Fetch 100 at a time
-        fetchPolicy: "network-only", // Ensure fresh data
+        variables: { owner, name, since: sinceDate, first: 100, cursor },
+        fetchPolicy: "network-only",
       });
+
+      const data: IssuesQueryData | null | undefined = queryResult.data;
+      const queryError = queryResult.error;
 
       if (queryError) throw new Error(queryError.message);
 

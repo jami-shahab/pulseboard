@@ -105,7 +105,8 @@ function RepoDetailClient({ owner, name }: { owner: string, name: string }) {
 // Import RSCs and other components needed by the Server Component
 import ContributorLeaderboard from "@/components/contributors/ContributorLeaderboard";
 import ContributorHeatmap from "@/components/metrics/ContributorHeatmap";
-import IssueVelocityChart from "@/components/metrics/IssueVelocityChart"; // Import Issue Velocity Chart
+import IssueVelocityChart from "@/components/metrics/IssueVelocityChart";
+import ReleaseCadence from "@/components/metrics/ReleaseCadence"; // Import Release Cadence
 import React from "react";
 
 // Default export is now a Server Component
@@ -127,10 +128,14 @@ export default function Home() {
       <RepoDetailClient owner={owner} name={name} />
 
       {/* Render Advanced Metrics (Client Components fetching own data) */}
-      <div className="my-12 grid grid-cols-1 gap-12"> {/* Grid for advanced metrics */}
+      {/* Arrange Heatmap/Velocity side-by-side and Cadence below them */}
+      <div className="my-12 grid grid-cols-1 lg:grid-cols-2 gap-8 items-start"> 
         <ContributorHeatmap repoOwner={owner} repoName={name} />
         <IssueVelocityChart repoOwner={owner} repoName={name} />
-        {/* TODO: Add Release Cadence chart here */}
+        {/* Span Cadence across columns on large screens or place it naturally */}
+        <div className="lg:col-span-2 mt-8 lg:mt-0"> 
+          <ReleaseCadence repoOwner={owner} repoName={name} />
+        </div>
       </div>
 
       {/* Render the Leaderboard Server Component */}
