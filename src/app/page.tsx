@@ -102,9 +102,10 @@ function RepoDetailClient({ owner, name }: { owner: string, name: string }) {
 
 // ----- End of Client Component -----
 
-// Import RSC outside the client component scope
+// Import RSCs and other components needed by the Server Component
 import ContributorLeaderboard from "@/components/contributors/ContributorLeaderboard";
-import React from "react"; // Import React for Suspense
+import ContributorHeatmap from "@/components/metrics/ContributorHeatmap"; // Import Heatmap
+import React from "react"; 
 
 // Default export is now a Server Component
 export default function Home() {
@@ -124,8 +125,13 @@ export default function Home() {
       {/* Render the Client Component part */}
       <RepoDetailClient owner={owner} name={name} />
 
-      {/* Render the Server Component part */}
-      {/* Use React Suspense for better loading UX with RSCs */}
+      {/* Render the Heatmap Client Component */}
+      {/* Since it fetches its own data client-side, no Suspense needed here */}
+      <div className="my-12"> {/* Add margin */} 
+        <ContributorHeatmap repoOwner={owner} repoName={name} />
+      </div>
+      
+      {/* Render the Leaderboard Server Component */}
       <React.Suspense fallback={<LeaderboardSkeleton />}>
         <ContributorLeaderboard repoOwner={owner} repoName={name} />
       </React.Suspense>
