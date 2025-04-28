@@ -35,9 +35,9 @@ export const dynamic = "force-dynamic";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { owner: string; name: string } }
+  context: { params: Promise<{ owner: string; name: string }> }
 ) {
-  const { owner, name } = await params;
+  const { owner, name } = await context.params;
   const maxReleasesToAnalyze = 50; // Limit how many releases to fetch/analyze
   const maxReleasesToList = 5; // How many to show in the UI
 

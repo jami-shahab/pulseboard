@@ -1,4 +1,4 @@
-import { NextResponse, NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import apolloClient from "@/lib/apollo/client"; // Use the server-side configured client
 import { GET_REPOSITORY_COMMITS } from "@/graphql/queries";
 import { getSession } from "next-auth/react"; // Can still use this server-side in route handlers
@@ -46,9 +46,9 @@ export const dynamic = "force-dynamic";
 // Replace with the user's provided "ultra-safe" pattern, but keep the original logic
 export async function GET(
   request: NextRequest,
-  { params }: { params: { owner: string; name: string } }
+  context: { params: Promise<{ owner: string; name: string }> }
 ) {
-  const { owner, name } = params;
+  const { owner, name } = await context.params;
 
   if (!owner || !name) {
     // Use NextResponse for consistency

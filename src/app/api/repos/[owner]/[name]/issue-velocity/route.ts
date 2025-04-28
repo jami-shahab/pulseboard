@@ -44,12 +44,12 @@ const getWeekStartDate = (date: dayjs.Dayjs): string => {
 
 export const dynamic = "force-dynamic"; // Ensure dynamic execution
 
-// Revert signature to destructure params directly
+// Updated signature for async params in Next.js 15
 export async function GET(
   request: NextRequest,
-  { params }: { params: { owner: string; name: string } } // Destructure params here
+  context: { params: Promise<{ owner: string; name: string }> }
 ) {
-  const { owner, name } = await params; // Use params directly
+  const { owner, name } = await context.params; // Await params
   const periodDays = 90; // Look at the last 90 days
 
   if (!owner || !name) {
