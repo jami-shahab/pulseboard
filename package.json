@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.13.8",
+    "@heroicons/react": "^2.2.0",
     "@types/react-calendar-heatmap": "^1.9.0",
     "dayjs": "^1.11.13",
     "graphql": "^16.11.0",

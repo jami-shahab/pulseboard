@@ -21,13 +21,13 @@ export default async function Header() {
     <header className="bg-neutral-50 shadow-sm sticky top-0 z-10 border-b border-neutral-200">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <Logo />
-        <nav className="flex items-center space-x-4">
+        <nav className="flex items-center space-x-6">
           {/* Placeholder links */}
-          <Link href="/" className="text-neutral-600 hover:text-primary transition-colors">
+          <Link href="/" className="text-sm text-neutral-600 hover:text-primary transition-colors">
             Dashboard
           </Link>
-          <Link href="/about" className="text-neutral-600 hover:text-primary transition-colors">
-            About
+          <Link href="/stack" className="text-sm text-neutral-600 hover:text-primary transition-colors">
+            Stack
           </Link>
 
           {/* Auth Section */}
