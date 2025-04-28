@@ -5,6 +5,7 @@ import dayjs from "dayjs"; // Using dayjs for easier date manipulation
 import weekOfYear from "dayjs/plugin/weekOfYear";
 import isoWeek from "dayjs/plugin/isoWeek"; // Use isoWeek for consistency
 import { ApolloQueryResult } from "@apollo/client"; // Import ApolloQueryResult
+import { NextRequest } from "next/server";
 
 dayjs.extend(weekOfYear);
 dayjs.extend(isoWeek);
@@ -41,11 +42,14 @@ const getWeekStartDate = (date: dayjs.Dayjs): string => {
   return date.isoWeekday(1).format("YYYY-MM-DD");
 };
 
+export const dynamic = "force-dynamic"; // Ensure dynamic execution
+
+// Revert signature to destructure params directly
 export async function GET(
-  request: Request,
-  { params }: { params: { owner: string; name: string } }
+  request: NextRequest,
+  { params }: { params: { owner: string; name: string } } // Destructure params here
 ) {
-  const { owner, name } = params;
+  const { owner, name } = await params; // Use params directly
   const periodDays = 90; // Look at the last 90 days
 
   if (!owner || !name) {

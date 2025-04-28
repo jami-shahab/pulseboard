@@ -18,8 +18,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
-      <body className="bg-neutral-100 font-sans antialiased">
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
+      <body className="bg-blue-100 font-sans antialiased" suppressHydrationWarning>
         <ProviderWrapper>
           <Header />
           <main className="min-h-screen p-6 md:p-8">

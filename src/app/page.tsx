@@ -1,119 +1,40 @@
-"use client";
+// Remove all client-side code (useQuery, useState, useEffect, client components imports)
+// Remove RepoDetailClient function definition
 
-import { useQuery } from "@apollo/client";
-import MetricCard from "@/components/metrics/MetricCard";
-import { GET_REPO_INFO } from "@/graphql/queries";
-// We cannot import the RSC directly into the Client Component
-// import ContributorLeaderboard from "@/components/contributors/ContributorLeaderboard";
-
-// Define the structure for the repo data used in this component
-interface RepoInfo {
-  id: string;
-  nameWithOwner: string;
-  description: string | null;
-  stargazerCount: number;
-  forkCount: number;
-  pushedAt: string;
-  issues: { totalCount: number };
-  allIssues: { totalCount: number };
-  latestRelease: {
-    id: string;
-    tagName: string;
-    publishedAt: string;
-  } | null;
-}
-
-// Renamed client component
-function RepoDetailClient({ owner, name }: { owner: string, name: string }) {
-  // Fetch data using the useQuery hook
-  const { loading, error, data } = useQuery<{ repository: RepoInfo }>(GET_REPO_INFO, {
-    variables: { owner, name },
-  });
-
-  const repo = data?.repository;
-
-  return (
-    <div className="animate-fade-in">
-      {/* Styled Data Card */}
-      <div className="max-w-md mx-auto bg-white rounded-xl shadow-lg overflow-hidden md:max-w-2xl border border-neutral-200 mb-8">
-        <div className="p-8">
-          <h2 className="uppercase tracking-wide text-sm text-primary font-semibold mb-1">
-            Repository Details ({owner}/{name})
-          </h2>
-          {loading && <p className="text-neutral-500 animate-pulse">Loading repository data...</p>}
-          {error && (
-            <div className="mt-4 p-4 bg-red-100 border border-red-300 rounded-md">
-              <p className="text-sm font-medium text-secondary-dark">
-                Error Fetching Repo Details
-              </p>
-              <p className="text-sm text-secondary-dark mt-1">{error.message}</p>
-            </div>
-          )}
-          {repo && (
-            <div className="animate-bubble-pop">
-              <p className="block mt-1 text-xl leading-tight font-semibold text-neutral-800">
-                {repo.nameWithOwner}
-              </p>
-              <p className="mt-2 text-neutral-600">{repo.description || "No description provided."}</p>
-              <div className="mt-5 pt-4 border-t border-neutral-200 flex flex-wrap justify-between gap-4 text-sm text-neutral-500">
-                <span>⭐ {repo.stargazerCount.toLocaleString()} stars</span>
-                <span>🍴 {repo.forkCount.toLocaleString()} forks</span>
-                <span>
-                  Last updated:{" "}
-                  {new Date(repo.pushedAt).toLocaleDateString()}
-                </span>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Health Metrics Section */}
-      <h2 className="text-2xl font-semibold text-neutral-700 text-center mb-6">
-        Health Metrics
-      </h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto mb-12"> {/* Added margin-bottom */} 
-        <MetricCard
-          label="Open Issues"
-          value={repo?.issues.totalCount}
-          isLoading={loading}
-          textColorClass="text-accent-dark"
-        />
-        <MetricCard
-          label="Total Issues"
-          value={repo?.allIssues.totalCount}
-          isLoading={loading}
-          textColorClass="text-neutral-700"
-        />
-        <MetricCard
-          label="Latest Release"
-          value={repo?.latestRelease?.tagName}
-          unit={repo?.latestRelease?.publishedAt
-            ? `(${new Date(repo.latestRelease.publishedAt).toLocaleDateString()})`
-            : undefined
-          }
-          isLoading={loading}
-          textColorClass="text-secondary-dark"
-        />
-      </div>
-    </div>
-  );
-}
-
-// ----- End of Client Component -----
-
-// Import RSCs and other components needed by the Server Component
+// Keep only imports needed for the Server Component part
 import ContributorLeaderboard from "@/components/contributors/ContributorLeaderboard";
 import ContributorHeatmap from "@/components/metrics/ContributorHeatmap";
 import IssueVelocityChart from "@/components/metrics/IssueVelocityChart";
-import ReleaseCadence from "@/components/metrics/ReleaseCadence"; // Import Release Cadence
+import ReleaseCadence from "@/components/metrics/ReleaseCadence";
 import React from "react";
+import RepoDetailClient from "@/components/page/RepoDetailClient";
+import apolloClient from "@/lib/apollo/client"; // Import server-capable client
+import { GET_REPO_INFO } from "@/graphql/queries";
+import { RepoInfo } from "@/components/page/RepoDetailClient"; // Import type from client component
 
-// Default export is now a Server Component
-export default function Home() {
+// Default export is the Server Component
+export default async function Home() {
   // Hardcode example repo for now
   const owner = "facebook";
   const name = "react";
+
+  // Fetch initial repo data server-side
+  let initialRepoData: RepoInfo | null = null;
+  let initialError: string | null = null;
+  try {
+    // Note: Apollo Client setup now correctly uses PAT server-side
+    const { data, error } = await apolloClient.query<{ repository: RepoInfo }>({ 
+      query: GET_REPO_INFO, 
+      variables: { owner, name },
+      // Consider fetch policy for RSC
+      // fetchPolicy: 'cache-first',
+    });
+    if (error) throw error;
+    initialRepoData = data?.repository ?? null;
+  } catch (err: any) {
+    console.error("Error fetching initial repo data:", err);
+    initialError = err.message || "Failed to load repository details.";
+  }
 
   return (
     <div className="container mx-auto py-10">
@@ -124,16 +45,19 @@ export default function Home() {
         Monitoring the heartbeat of Open Source, in real-time.
       </p>
 
-      {/* Render the Client Component part (Repo Details + Basic Metrics) */}
-      <RepoDetailClient owner={owner} name={name} />
+      {/* Render the Client Component part, passing initial data */}
+      <RepoDetailClient 
+        owner={owner} 
+        name={name} 
+        initialData={initialRepoData} 
+        initialError={initialError} 
+      />
 
       {/* Render Advanced Metrics (Client Components fetching own data) */}
-      {/* Arrange Heatmap/Velocity side-by-side and Cadence below them */}
-      <div className="my-12 grid grid-cols-1 lg:grid-cols-2 gap-8 items-start"> 
+      <div className="my-12 grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         <ContributorHeatmap repoOwner={owner} repoName={name} />
         <IssueVelocityChart repoOwner={owner} repoName={name} />
-        {/* Span Cadence across columns on large screens or place it naturally */}
-        <div className="lg:col-span-2 mt-8 lg:mt-0"> 
+        <div className="lg:col-span-2 mt-8 lg:mt-0">
           <ReleaseCadence repoOwner={owner} repoName={name} />
         </div>
       </div>

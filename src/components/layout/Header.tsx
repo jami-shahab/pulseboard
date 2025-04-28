@@ -1,8 +1,8 @@
 import Link from "next/link";
 import React from "react";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // Import authOptions
-import AuthButton from "./AuthButton"; // We will create this client component next
+import { authOptions } from "@/lib/authOptions"; // Import authOptions
+import AuthButton from "@/components/auth/AuthButton"; // We will create this client component next
 import Image from "next/image"; // Import Image for user avatar
 
 // Simple placeholder Logo component

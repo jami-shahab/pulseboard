@@ -29,22 +29,31 @@ const httpLink = createHttpLink({
 const authLink = setContext(async (_, { headers }) => {
   // Get the user session
   const session = await getSession();
+  console.log("[Apollo AuthLink] Session:", session); // Log the session
 
   let token: string | undefined;
+  let tokenSource: string = "None";
 
   // Use the user's access token if available in the session
   if (session?.accessToken) {
     token = session.accessToken;
+    tokenSource = "Session AccessToken";
   } else {
     // Otherwise, fall back to the application's PAT (for public data)
     token = githubPat;
+    tokenSource = githubPat ? "GITHUB_PAT" : "No Fallback PAT";
+    if (!githubPat) {
+      console.warn("[Apollo AuthLink] GITHUB_PAT is missing!");
+    }
   }
+
+  console.log(`[Apollo AuthLink] Using token from: ${tokenSource}`); // Log the source
 
   // Return the headers to the context so httpLink can read them
   return {
     headers: {
       ...headers,
-      authorization: token ? `Bearer ${token}` : "",
+      authorization: token ? `Bearer ${token}` : "", // Add Bearer token
     },
   };
 });

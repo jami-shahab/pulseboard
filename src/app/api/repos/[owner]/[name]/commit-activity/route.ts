@@ -1,12 +1,34 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import apolloClient from "@/lib/apollo/client"; // Use the server-side configured client
 import { GET_REPOSITORY_COMMITS } from "@/graphql/queries";
 import { getSession } from "next-auth/react"; // Can still use this server-side in route handlers
 import { headers } from "next/headers"; // To potentially pass auth context if needed differently
+import { ApolloQueryResult } from "@apollo/client";
 
 interface CommitNode {
   id: string;
   committedDate: string;
+}
+
+// Define the expected type for the GraphQL query result
+interface CommitQueryData {
+  repository: {
+    id: string;
+    defaultBranchRef: {
+      name: string;
+      target: {
+        // Assuming target is always a Commit based on the query structure
+        id: string;
+        history: {
+          nodes: CommitNode[];
+          pageInfo: {
+            hasNextPage: boolean;
+            endCursor: string | null;
+          };
+        };
+      } | null;
+    } | null;
+  } | null;
 }
 
 interface HeatmapData {
@@ -19,44 +41,37 @@ const formatDate = (dateStr: string): string => {
   return new Date(dateStr).toISOString().split('T')[0];
 };
 
+export const dynamic = "force-dynamic";
+
+// Replace with the user's provided "ultra-safe" pattern, but keep the original logic
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { owner: string; name: string } }
 ) {
   const { owner, name } = params;
 
   if (!owner || !name) {
+    // Use NextResponse for consistency
     return NextResponse.json(
       { error: "Repository owner and name are required" },
       { status: 400 }
     );
   }
 
-  // Note: We might need to adjust auth handling here if the Apollo Client's
-  // getSession() doesn't work reliably in Route Handlers for *all* cases.
-  // An alternative is passing the token explicitly if needed.
-  // For now, relying on the global apolloClient config.
-
   try {
-    // Fetch commits (adjust limit as needed, pagination required for full year)
-    // Let's fetch more for a better initial heatmap look
-    const commitLimit = 200; 
-    const { data, error: queryError, loading } = await apolloClient.query({
+    const commitLimit = 100;
+    const queryResult: ApolloQueryResult<CommitQueryData> = await apolloClient.query<CommitQueryData>({
       query: GET_REPOSITORY_COMMITS,
       variables: { owner, name, limit: commitLimit },
-      // Use network-only or no-cache to ensure fresh data for the API route?
-      // Depends on how often we expect this to be hit vs. GitHub rate limits.
-      // Let's stick with default for now.
-      // fetchPolicy: 'network-only',
     });
 
-    if (queryError) {
-      throw new Error(queryError.message);
-    }
+    // Ensure data is declared from the query result
+    const data: CommitQueryData | null | undefined = queryResult.data;
+
+    if (queryResult.error) throw new Error(queryResult.error.message);
 
     const commits = data?.repository?.defaultBranchRef?.target?.history?.nodes as CommitNode[] || [];
 
-    // Process commits into heatmap format
     const activity: Record<string, number> = {};
     commits.forEach(commit => {
       const date = formatDate(commit.committedDate);
@@ -67,11 +82,13 @@ export async function GET(
       date,
       count,
     }));
-
+    
+    // Return using NextResponse
     return NextResponse.json(heatmapData);
 
   } catch (err: any) {
     console.error(`Error fetching commit activity for ${owner}/${name}:`, err);
+    // Return using NextResponse
     return NextResponse.json(
       { error: `Failed to fetch commit activity: ${err.message}` },
       { status: 500 }

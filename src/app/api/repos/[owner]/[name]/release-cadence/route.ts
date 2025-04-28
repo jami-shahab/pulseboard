@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import apolloClient from "@/lib/apollo/client";
 import { GET_RELEASES } from "@/graphql/queries";
 import dayjs from "dayjs";
@@ -31,11 +31,13 @@ interface ReleaseCadenceData {
   releases: { tagName: string; publishedAt: string }[]; // Last few releases
 }
 
+export const dynamic = "force-dynamic";
+
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { owner: string; name: string } }
 ) {
-  const { owner, name } = params;
+  const { owner, name } = await params;
   const maxReleasesToAnalyze = 50; // Limit how many releases to fetch/analyze
   const maxReleasesToList = 5; // How many to show in the UI
 
