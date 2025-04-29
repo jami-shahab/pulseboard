@@ -15,6 +15,7 @@ interface CommitNode {
       id: string;
       login: string;
       avatarUrl: string;
+      name: string | null;
     } | null; // User might not be linked
   };
 }

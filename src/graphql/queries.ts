@@ -47,6 +47,7 @@ export const GET_REPOSITORY_COMMITS = gql`
                     id
                     login
                     avatarUrl
+                    name
                   }
                 }
               }

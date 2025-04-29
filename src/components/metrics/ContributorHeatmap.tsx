@@ -61,11 +61,10 @@ export default function ContributorHeatmap({ repoOwner, repoName }: HeatmapProps
     fetchData();
   }, [repoOwner, repoName]); // Refetch if owner/name changes
 
-  const getClassForValue = (value: HeatmapData | null) => {
-    if (!value || value.count === 0) {
-      return 'color-empty'; // Use default empty color
+  const getClassForValue = (value: any) => {
+    if (!value || !value.count || value.count === 0) {
+      return 'color-empty';
     }
-    // Simple color scale based on commit count (adjust as needed)
     if (value.count >= 8) {
       return 'color-github-4'; 
     }
@@ -125,13 +124,18 @@ export default function ContributorHeatmap({ repoOwner, repoName }: HeatmapProps
             endDate={endDate}
             values={data}
             classForValue={getClassForValue}
-            tooltipDataAttrs={(value: HeatmapData) => {
-                const dateStr = value.date ? new Date(value.date).toLocaleDateString() : 'date unknown';
-                const count = value.count ?? 0;
-                return {
-                  'data-tooltip-id': 'heatmap-tooltip',
-                  'data-tooltip-content': `${count} commit${count !== 1 ? 's' : ''} on ${dateStr}`,
-                };
+            tooltipDataAttrs={(value: any) => { 
+                const attrs: Record<string, any> = {};
+                if (!value || !value.date) {
+                  attrs['data-tooltip-id'] = 'heatmap-tooltip';
+                  attrs['data-tooltip-content'] = `No commits`;
+                } else {
+                  const dateStr = new Date(value.date).toLocaleDateString();
+                  const count = value.count ?? 0;
+                  attrs['data-tooltip-id'] = 'heatmap-tooltip';
+                  attrs['data-tooltip-content'] = `${count} commit${count !== 1 ? 's' : ''} on ${dateStr}`;
+                }
+                return attrs;
             }}
             showWeekdayLabels={true}
           />
