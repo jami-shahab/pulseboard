@@ -2,9 +2,9 @@ import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import { getSession } from "next-auth/react";
 
-// Ensure environment variables are defined
+// Read GitHub API URL and Personal Access Token (PAT) from environment variables.
 const githubApiUrl = process.env.NEXT_PUBLIC_GITHUB_GRAPHQL_ENDPOINT;
-const githubPat = process.env.GITHUB_PAT;
+const githubPat = process.env.GITHUB_PAT; 
 
 if (!githubApiUrl) {
   throw new Error(
@@ -13,8 +13,6 @@ if (!githubApiUrl) {
 }
 
 if (!githubPat) {
-  // This check mainly helps during development if the .env.local is missing/misconfigured.
-  // In production builds, this variable should ideally always be present.
   console.warn(
     "Apollo Client Warning: GITHUB_PAT environment variable is not set. Logged-out GitHub API requests will be unauthorized and subject to stricter rate limits."
   );
