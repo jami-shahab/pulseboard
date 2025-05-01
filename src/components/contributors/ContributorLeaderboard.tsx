@@ -86,8 +86,8 @@ export default async function ContributorLeaderboard({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-lg border border-neutral-200 p-6 w-full max-w-2xl mx-auto">
-      <h3 className="text-xl font-semibold text-neutral-800 mb-4">
+    <div className="bg-card rounded-xl shadow-subtle border border-border p-6 w-full max-w-2xl mx-auto">
+      <h3 className="text-xl font-semibold text-primary mb-6">
         Top Contributors (Last {limit} Commits)
       </h3>
       {isLoading && (

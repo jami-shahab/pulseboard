@@ -20,23 +20,24 @@ export default function AuthButton({ action }: AuthButtonProps) {
     );
   }
 
-  if (action === 'signin') {
-    return (
-      <button
-        onClick={() => signIn('github')} // Specify GitHub provider
-        className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors"
-      >
-        Login with GitHub
-      </button>
-    );
-  }
+  const handleAuth = () => {
+    if (action === 'signin') {
+      signIn('github'); // Specify GitHub provider
+    } else {
+      signOut();
+    }
+  };
+
+  // Apply new theme styling
+  const baseStyle = 'px-4 py-2 rounded-lg font-semibold transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2';
+  
+  const styles = action === 'signin'
+    ? `${baseStyle} bg-primary text-white hover:bg-primary-hover focus:ring-primary shadow-sm hover:shadow-md` // Primary button style
+    : `${baseStyle} bg-neutral-200 text-neutral-700 hover:bg-neutral-300 focus:ring-neutral-400`; // Secondary/logout button style
 
   if (action === 'signout' && session) {
     return (
-      <button
-        onClick={() => signOut()} // Default signOut redirects
-        className="px-3 py-1.5 text-sm font-medium text-neutral-700 bg-neutral-200 rounded-md hover:bg-neutral-300 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-neutral-400 transition-colors"
-      >
+      <button onClick={handleAuth} className={styles}>
         Sign Out
       </button>
     );

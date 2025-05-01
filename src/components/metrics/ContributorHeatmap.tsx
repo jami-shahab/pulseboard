@@ -78,8 +78,8 @@ export default function ContributorHeatmap({ repoOwner, repoName }: HeatmapProps
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg border border-neutral-200 p-6 w-full max-w-4xl mx-auto relative">
-      <h3 className="text-xl font-semibold text-neutral-800 mb-4">
+    <div className="bg-card rounded-xl shadow-subtle border border-border p-6 w-full relative">
+      <h3 className="text-xl font-semibold text-primary mb-4">
         Commit Activity (Last ~200 Commits)
       </h3>
       {loading && (

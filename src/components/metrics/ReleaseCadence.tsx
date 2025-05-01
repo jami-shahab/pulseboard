@@ -54,9 +54,9 @@ export default function ReleaseCadence({ repoOwner, repoName }: ReleaseCadencePr
   }, [repoOwner, repoName]);
 
   return (
-    <div className="bg-white rounded-lg shadow-lg border border-neutral-200 p-6 w-full">
-      <h3 className="text-xl font-semibold text-neutral-800 mb-4">
-        Release Cadence
+    <div className="bg-card rounded-xl shadow-subtle border border-border p-6 w-full">
+      <h3 className="text-xl font-semibold text-primary mb-4">
+        Recent Release Cadence
       </h3>
       {loading && (
         <div className="space-y-3 animate-pulse">

@@ -37,15 +37,14 @@ export default async function Home() {
   }
 
   return (
-    <div className="container mx-auto py-10">
-      <h1 className="text-4xl font-bold text-center mb-2 text-neutral-800">
+    <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">
+      <h1 className="text-3xl sm:text-4xl font-bold text-center mb-3 text-primary">
         Welcome to Pulseboard
       </h1>
-      <p className="text-lg text-center text-neutral-600 mb-12">
+      <p className="text-lg text-center text-neutral-600 mb-10 sm:mb-16">
         Monitoring the heartbeat of Open Source, in real-time.
       </p>
 
-      {/* Render the Client Component part, passing initial data */}
       <RepoDetailClient 
         owner={owner} 
         name={name} 
@@ -53,16 +52,16 @@ export default async function Home() {
         initialError={initialError} 
       />
 
-      {/* Render Advanced Metrics (Client Components fetching own data) */}
-      <div className="my-12 grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+      <h2 className="text-2xl font-semibold text-center mt-12 mb-8 text-secondary">Health Metrics</h2>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
         <ContributorHeatmap repoOwner={owner} repoName={name} />
         <IssueVelocityChart repoOwner={owner} repoName={name} />
-        <div className="lg:col-span-2 mt-8 lg:mt-0">
+        <div className="lg:col-span-2">
           <ReleaseCadence repoOwner={owner} repoName={name} />
         </div>
       </div>
 
-      {/* Render the Leaderboard Server Component */}
+      <h2 className="text-2xl font-semibold text-center mt-12 mb-8 text-secondary">Top Contributors</h2>
       <React.Suspense fallback={<LeaderboardSkeleton />}>
         <ContributorLeaderboard repoOwner={owner} repoName={name} />
       </React.Suspense>
@@ -71,13 +70,13 @@ export default async function Home() {
   );
 }
 
-// Simple Skeleton for the Leaderboard loading state
+// Style Skeleton to match card style
 const LeaderboardSkeleton = () => (
-  <div className="bg-white rounded-lg shadow-lg border border-neutral-200 p-6 w-full max-w-2xl mx-auto animate-pulse">
-    <h3 className="text-xl font-semibold text-neutral-800 mb-4 h-6 bg-neutral-200 rounded w-1/2"></h3>
-    <div className="space-y-3">
+  <div className="bg-card rounded-xl shadow-subtle border border-border p-6 w-full max-w-2xl mx-auto animate-pulse">
+    <div className="h-6 bg-neutral-200 rounded w-1/2 mb-6"></div>
+    <div className="space-y-4">
       {[...Array(3)].map((_, i) => (
-        <div key={i} className="flex items-center space-x-3">
+        <div key={i} className="flex items-center space-x-4">
           <div className="h-10 w-10 bg-neutral-200 rounded-full"></div>
           <div className="flex-1 space-y-2">
             <div className="h-4 bg-neutral-200 rounded w-3/4"></div>

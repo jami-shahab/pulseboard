@@ -62,8 +62,8 @@ export default function IssueVelocityChart({ repoOwner, repoName }: IssueVelocit
   }, [repoOwner, repoName]);
 
   return (
-    <div className="bg-white rounded-lg shadow-lg border border-neutral-200 p-6 w-full max-w-4xl mx-auto">
-      <h3 className="text-xl font-semibold text-neutral-800 mb-4">
+    <div className="bg-card rounded-xl shadow-subtle border border-border p-6 w-full">
+      <h3 className="text-xl font-semibold text-primary mb-6">
         Issue Velocity (Last 90 Days)
       </h3>
       {loading && (

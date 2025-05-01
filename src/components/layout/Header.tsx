@@ -7,7 +7,7 @@ import Image from "next/image"; // Import Image for user avatar
 
 // Simple placeholder Logo component
 const Logo = () => (
-  <Link href="/" className="text-2xl font-bold text-primary hover:text-primary-dark transition-colors">
+  <Link href="/" className="text-2xl font-bold text-primary hover:text-primary-hover transition-colors">
     Pulseboard
   </Link>
 );
@@ -18,31 +18,31 @@ export default async function Header() {
   const session = await getServerSession(authOptions);
 
   return (
-    <header className="bg-neutral-50 shadow-sm sticky top-0 z-10 border-b border-neutral-200">
-      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+    <header className="bg-card shadow-subtle sticky top-0 z-40 border-b border-border">
+      <div className="container mx-auto px-6 py-4 flex justify-between items-center">
         <Logo />
         <nav className="flex items-center space-x-6">
-          {/* Placeholder links */}
-          <Link href="/" className="text-sm text-neutral-600 hover:text-primary transition-colors">
+          {/* Style nav links */}
+          <Link href="/" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
             Dashboard
           </Link>
-          <Link href="/stack" className="text-sm text-neutral-600 hover:text-primary transition-colors">
+          <Link href="/stack" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
             Stack
           </Link>
 
-          {/* Auth Section */}
+          {/* Auth Section Styling */}
           {session?.user ? (
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-4">
               {session.user.image && (
                 <Image
                   src={session.user.image}
                   alt={session.user.name || "User Avatar"}
-                  width={32}
-                  height={32}
-                  className="rounded-full border border-neutral-300"
+                  width={36} // Slightly larger avatar
+                  height={36}
+                  className="rounded-full border-2 border-primary-light"
                 />
               )}
-              <span className="text-sm text-neutral-700 hidden md:inline">
+              <span className="text-sm font-medium text-foreground hidden md:inline">
                 {session.user.name || session.user.email}
               </span>
               {/* Sign Out Button (uses Client Component) */}

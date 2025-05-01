@@ -18,11 +18,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable} suppressHydrationWarning>
-      <body className="bg-blue-100 font-sans antialiased" suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable} h-full`} suppressHydrationWarning>
+      <body className="bg-background text-foreground font-sans antialiased h-full" suppressHydrationWarning>
         <ProviderWrapper>
           <Header />
-          <main className="min-h-screen p-6 md:p-8">
+          <main className="min-h-screen p-4 sm:p-6 lg:p-8">
             {/* TODO: Add Header/Navbar Component Here */} 
             {children}
             {/* TODO: Add Footer Component Here */} 

@@ -35,11 +35,11 @@ export default function RepoDetailClient({
   initialData,
   initialError
 }: RepoDetailClientProps) {
-
-  // Use state to hold data/error, potentially for future updates/refetches
+  // Restore useState for managing state based on props
   const [repo, setRepo] = React.useState<RepoInfo | null>(initialData);
   const [error, setError] = React.useState<string | null>(initialError);
-  const [loading, setLoading] = React.useState<boolean>(!initialData && !initialError); // Initially loading only if no data/error passed
+  // Loading is true only if no initial data/error was provided (might need adjustment if refetching is added)
+  const [loading, setLoading] = React.useState<boolean>(!initialData && !initialError); 
 
   // Basic loading state (could be more sophisticated)
   if (loading) {
@@ -47,39 +47,36 @@ export default function RepoDetailClient({
   }
 
   return (
-    <div className="animate-fade-in">
-      {/* Styled Data Card */}
-      <div className="max-w-md mx-auto bg-white rounded-xl shadow-lg overflow-hidden md:max-w-2xl border border-neutral-200 mb-8">
-        <div className="p-8">
-          <h2 className="uppercase tracking-wide text-sm text-primary font-semibold mb-1">
-            Repository Details ({owner}/{name})
-          </h2>
-          {/* Display initial error if present */}
-          {error && !repo && (
-            <div className="mt-4 p-4 bg-red-100 border border-red-300 rounded-md">
-              <p className="text-sm font-medium text-secondary-dark">
-                Error Fetching Repo Details
-              </p>
-              <p className="text-sm text-secondary-dark mt-1">{error}</p>
+    <div className="bg-card rounded-xl shadow-subtle border border-border overflow-hidden mb-10 sm:mb-16">
+      <div className="p-6">
+        <h2 className="uppercase tracking-wider text-sm font-semibold text-primary mb-2">
+          Repository Details ({owner}/{name})
+        </h2>
+        {/* Display initial error if present */}
+        {error && !repo && (
+          <div className="mt-4 p-4 bg-red-100 border border-red-300 rounded-md">
+            <p className="text-sm font-medium text-secondary-dark">
+              Error Fetching Repo Details
+            </p>
+            <p className="text-sm text-secondary-dark mt-1">{error}</p>
+          </div>
+        )}
+        {repo && (
+          <div className="animate-bubble-pop">
+            <p className="block mt-1 text-xl leading-tight font-semibold text-neutral-800">
+              {repo.nameWithOwner}
+            </p>
+            <p className="mt-2 text-neutral-600">{repo.description || "No description provided."}</p>
+            <div className="mt-5 pt-4 border-t border-neutral-200 flex flex-wrap justify-between gap-4 text-sm text-neutral-500">
+              <span>⭐ {repo.stargazerCount.toLocaleString()} stars</span>
+              <span>🍴 {repo.forkCount.toLocaleString()} forks</span>
+              <span>
+                Last updated:{" "}
+                {new Date(repo.pushedAt).toLocaleDateString()}
+              </span>
             </div>
-          )}
-          {repo && (
-            <div className="animate-bubble-pop">
-              <p className="block mt-1 text-xl leading-tight font-semibold text-neutral-800">
-                {repo.nameWithOwner}
-              </p>
-              <p className="mt-2 text-neutral-600">{repo.description || "No description provided."}</p>
-              <div className="mt-5 pt-4 border-t border-neutral-200 flex flex-wrap justify-between gap-4 text-sm text-neutral-500">
-                <span>⭐ {repo.stargazerCount.toLocaleString()} stars</span>
-                <span>🍴 {repo.forkCount.toLocaleString()} forks</span>
-                <span>
-                  Last updated:{" "}
-                  {new Date(repo.pushedAt).toLocaleDateString()}
-                </span>
-              </div>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Health Metrics Section */}
