@@ -1,4 +1,9 @@
 # Pulseboard - Real-time Open Source Health Dashboard
+Note: This project is still in development. 
+
+
+https://www.loom.com/share/32b6fe78d3e54126a3a3db9f09da2462?sid=e129abc3-a41a-4458-9155-d5b52a6069fa 
+
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FYOUR_GITHUB_USERNAME%2Fpulseboard&env=GITHUB_PAT,GITHUB_CLIENT_ID,GITHUB_CLIENT_SECRET,NEXTAUTH_SECRET,NEXTAUTH_URL,NEXT_PUBLIC_GITHUB_GRAPHQL_ENDPOINT&envDescription=Required%20environment%20variables%20for%20Pulseboard&project-name=pulseboard&repository-name=pulseboard)
 
