@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pulseboard Demo</title>
+    <link href="./style.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="./script.js" defer></script>
+</head>
+<body>
+
+    <div class="background-overlay"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>Pulseboard</h1>
+            <div class="search-container">
+                <input type="search" id="repo-search" placeholder="Enter GitHub Repo URL...">
+                <span>&#x1F50D;</span> <!-- Magnifying glass -->
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="navigation">
+            <ul>
+                <li><button data-tab="overview" class="tab-button active">Overview</button></li>
+                <li><button data-tab="contributors" class="tab-button">Contributors</button></li>
+                <li><button data-tab="health" class="tab-button">Health</button></li>
+                <li><button data-tab="settings" class="tab-button">Settings</button></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main id="main-content">
+            <!-- Overview Tab -->
+            <section id="overview-tab" class="tab-content">
+                <h2>Repository Overview</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Commits (30d)</h3>
+                        <p>1,234</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Open Issues</h3>
+                        <p>56</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Avg. Merge Time</h3>
+                        <p>1.5 days</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>PRs Merged</h3>
+                        <p>78</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Code Churn</h3>
+                        <p>+5k / -2k</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Active Contributors</h3>
+                        <p>15</p>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h3>Commit Activity (Last Week)</h3>
+                    <div class="chart" id="commit-chart">
+                        <!-- Bars will be added by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contributors Tab -->
+            <section id="contributors-tab" class="tab-content hidden">
+                <h2>Contributor Leaderboard</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Contributor</th>
+                                <th>Commits (30d)</th>
+                                <th>Additions</th>
+                                <th>Deletions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-body">
+                            <!-- Rows will be added by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Health Tab (Placeholder) -->
+            <section id="health-tab" class="tab-content hidden">
+                <h2>Repository Health</h2>
+                <div class="placeholder-content health-layout">
+                    <div class="health-card">
+                        <h4>Issue Velocity</h4>
+                        <p class="metric">15 <span class="unit">closed/week</span></p>
+                        <p class="trend up">+12% vs last month</p>
+                        <div class="mini-chart issue-chart">
+                            <!-- Simple bar chart: Week 1, 2, 3, 4 -->
+                            <div class="mini-bar" style="height: 60%;" data-value="12"></div>
+                            <div class="mini-bar" style="height: 80%;" data-value="16"></div>
+                            <div class="mini-bar" style="height: 75%;" data-value="15"></div>
+                            <div class="mini-bar" style="height: 90%;" data-value="18"></div>
+                        </div>
+                    </div>
+                    <div class="health-card">
+                        <h4>PR Merge Time</h4>
+                        <p class="metric">1.8 <span class="unit">days</span></p>
+                        <p class="trend down">-0.2 days vs last month</p>
+                        <div class="mini-chart pr-chart">
+                             <!-- Simple horizontal bar -->
+                             <div class="h-bar-outer" data-value="1.8 days"><div class="h-bar-inner" style="width: 70%;"></div></div>
+                        </div>
+                    </div>
+                     <div class="health-card">
+                        <h4>Code Complexity</h4>
+                        <p class="metric">18.5 <span class="unit">avg</span></p>
+                        <p class="trend stable">+0.1 vs last month</p>
+                         <div class="mini-chart complexity-chart">
+                             <!-- Simple line graph simulation -->
+                            <svg viewBox="0 0 100 30" preserveAspectRatio="none" data-value="18.5 avg">
+                               <polyline points="0,20 25,10 50,15 75,5 100,12" fill="none" stroke="var(--secondary-color)" stroke-width="2"/>
+                            </svg>
+                         </div>
+                    </div>
+                     <div class="health-card">
+                        <h4>Active Branches</h4>
+                        <p class="metric">25</p>
+                        <p class="trend up">+3 vs last month</p>
+                         <div class="mini-chart branch-chart">
+                             <!-- More simple bars -->
+                            <div class="mini-bar" style="height: 50%;" data-value="22"></div>
+                            <div class="mini-bar" style="height: 60%;" data-value="24"></div>
+                            <div class="mini-bar" style="height: 80%;" data-value="25"></div>
+                         </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Tab (Placeholder) -->
+            <section id="settings-tab" class="tab-content hidden">
+                <h2>Settings</h2>
+                <div class="placeholder-content settings-layout">
+                    <div class="settings-section">
+                        <h4>Notifications</h4>
+                        <label><input type="checkbox" checked> Email summary weekly</label>
+                        <label><input type="checkbox"> Alert on critical issues</label>
+                        <label><input type="checkbox"> Notify on new PR comments</label>
+                    </div>
+                     <div class="settings-section">
+                        <h4>Connected Accounts</h4>
+                        <p>GitHub: pulseboard-demo (Connected)</p>
+                        <p>Slack: #dev-channel (Connected) <button class="btn-disconnect">Disconnect</button></p>
+                        <button class="btn-connect">Connect Jira</button>
+                    </div>
+                    <div class="settings-section">
+                        <h4>Repository Access</h4>
+                        <p>You have <span class="access-level">Admin</span> access.</p>
+                        <a href="#">Manage team access</a>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html> 

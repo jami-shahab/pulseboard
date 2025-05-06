@@ -1,0 +1,674 @@
+:root {
+    --primary-color: #8b5cf6; /* violet-500 */
+    --primary-light: #a78bfa; /* violet-400 */
+    --primary-dark: #7c3aed;  /* violet-600 */
+    --secondary-color: #6366f1; /* indigo-500 */
+    --secondary-light: #818cf8; /* indigo-400 */
+    --secondary-dark: #4f46e5; /* indigo-600 */
+    --text-color: #374151; /* gray-700 */
+    --background-color: #ffffff;
+    --card-background: linear-gradient(135deg, #f5f3ff, #eef2ff); /* violet-50 to indigo-50 */
+    --border-color: #e5e7eb; /* gray-200 */
+    --border-radius-lg: 12px; /* Bubbly radius */
+    --border-radius-md: 8px;
+    --border-radius-sm: 6px;
+    --box-shadow-soft: 0 6px 12px rgba(139, 92, 246, 0.1);
+    --box-shadow-hover: 0 8px 16px rgba(139, 92, 246, 0.15);
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    position: relative;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.background-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    opacity: 0.5; /* Increased opacity slightly */
+    /* Flowing wave/abstract pattern (SVG data URI) */
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23a78bfa"/><stop offset="100%" stop-color="%23818cf8"/></linearGradient></defs><path fill="url(%23g)" d="M 0 400 C 100 300 150 300 200 400 S 300 500 400 400 S 500 300 600 400 S 700 500 800 400 V 800 H 0 Z"/><path fill="url(%23g)" d="M 0 500 C 100 400 150 400 200 500 S 300 600 400 500 S 500 400 600 500 S 700 600 800 500 V 800 H 0 Z" opacity="0.5"/></svg>');
+    background-size: cover;
+    animation: moveBackground 80s linear infinite alternate;
+}
+
+@keyframes moveBackground {
+    from { background-position: 0% 0%; }
+    to { background-position: 100% 100%; }
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+h1, h2, h3 {
+    color: var(--primary-dark);
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin: 0 0 1rem 0; /* Margin bottom on small screens */
+}
+
+.search-container {
+    position: relative;
+}
+
+.search-container input {
+    padding: 0.6rem 2rem 0.6rem 0.8rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    width: 280px;
+    font-size: 1rem;
+}
+
+.search-container input:focus {
+    outline: none;
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 2px rgba(167, 139, 250, 0.5);
+}
+
+.search-container span {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af; /* gray-400 */
+    pointer-events: none;
+}
+
+/* Navigation */
+.navigation ul {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.navigation li {
+    margin-right: 1rem;
+}
+
+.tab-button {
+    padding: 0.5rem 1rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #6b7280; /* gray-500 */
+    border-bottom: 3px solid transparent;
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.tab-button:hover {
+    color: var(--primary-color);
+}
+
+.tab-button.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+/* Main Content */
+.tab-content {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.tab-content.hidden {
+    display: none;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+/* Dim other cards when one is hovered */
+/* REMOVED FOR NOW - Focusing on hovered card only */
+.stats-grid:has(.stat-card:hover) .stat-card:not(:hover) {
+    opacity: 0.3; 
+    filter: grayscale(90%); 
+    transform: scale(0.92); /* Removed shrinking */ 
+}
+/**/
+
+.stat-card {
+    background: var(--card-background);
+    padding: 1.5rem;
+    border-radius: var(--border-radius-lg); /* Bubbly */
+    box-shadow: var(--box-shadow-soft);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease-in-out, opacity 0.3s ease; /* Slightly longer transition */
+    opacity: 0; /* Start hidden for animation */
+    animation: slideInUp 0.8s ease-out forwards; /* Slower slideInUp */
+}
+
+/* Stagger animation for cards */
+.stat-card:nth-child(1) { animation-delay: 0.1s; }
+.stat-card:nth-child(2) { animation-delay: 0.15s; }
+.stat-card:nth-child(3) { animation-delay: 0.2s; }
+.stat-card:nth-child(4) { animation-delay: 0.25s; }
+.stat-card:nth-child(5) { animation-delay: 0.3s; }
+.stat-card:nth-child(6) { animation-delay: 0.35s; }
+
+.stat-card:hover {
+    transform: scale(1.7); /* EXTREMELY LARGER scale */
+    box-shadow: 0 35px 70px rgba(139, 92, 246, 0.4); /* Even BIGGER shadow */
+    z-index: 10; /* Ensure hovered card is on top */
+    position: relative; /* Needed for z-index */
+    width: 100%;
+    height: 100%;
+}
+
+.stat-card h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primary-dark);
+}
+
+.stat-card p {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--secondary-color);
+}
+
+/* Chart */
+.chart-container {
+    background-color: var(--background-color);
+    padding: 1.5rem;
+    border-radius: var(--border-radius-lg); /* Bubbly */
+    border-radius: 12px; /* More bubbly */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.07); /* Softer shadow */
+    opacity: 1; /* Ensure visible - remove animation for debug */
+    /* animation: slideInUp 0.5s ease 0.4s forwards; */
+    margin-top: 3rem;
+}
+
+.chart {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    height: 250px;
+    /* border: 1px solid var(--border-color); */ /* Remove border for cleaner look */
+    padding: 1rem 0.5rem 0 0.5rem; 
+    background-color: #f9fafb; /* Add slight background to chart area */
+    border-radius: 8px; /* Rounded corners inside */
+}
+
+.chart .bar-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    height: 100%; /* Ensure wrapper takes height */
+    position: relative; /* Needed for label positioning if changed */
+}
+
+.chart .bar {
+    display: block !important; /* FORCE display */
+    width: 45px; /* Wider bars */
+    min-height: 5px; /* Ensure minimum visibility */
+    background-color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    transition: background-color 0.2s ease, transform 0.3s ease, filter 0.2s ease, width 0.3s ease-in-out; /* Added width to transition */
+    transform-origin: bottom; /* Explicitly set here too */
+    animation: growHeight 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards; /* Much Slower, bouncy animation */
+    border-radius: 6px 6px 0 0; /* Bubblier rounded tops */
+}
+
+.chart .bar.weekend {
+    background-color: var(--secondary-color);
+}
+
+.chart .bar:hover {
+    background-color: var(--primary-dark);
+    width: 60px; /* Explicitly set larger width */
+    filter: brightness(1.2);
+    position: relative; /* Ensure it's above siblings if overlapping */
+    z-index: 5;
+}
+
+.chart .bar.weekend:hover {
+    background-color: var(--secondary-dark);
+    width: 60px; /* Explicitly set larger width */
+    filter: brightness(1.2);
+    position: relative;
+    z-index: 5;
+}
+
+.chart .bar-label {
+    font-size: 0.75rem;
+    color: #6b7280; /* gray-500 */
+    /* position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); */ /* Alternative label positioning */
+}
+
+@keyframes growHeight {
+    from { transform: scaleY(0); transform-origin: bottom; }
+    to { transform: scaleY(1); transform-origin: bottom; }
+}
+
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(40px); } /* Start further down */
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Contributors Table */
+.table-container {
+    overflow-x: auto;
+    background-color: var(--background-color);
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+table {
+    width: 100%;
+    min-width: 600px;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+thead th {
+    color: var(--primary-dark);
+    font-weight: 600;
+}
+
+tbody tr {
+    opacity: 0;
+    animation: slideInUp 0.5s ease forwards;
+}
+
+tbody tr:hover {
+    background-color: #f9fafb; /* gray-50 */
+}
+
+tbody td {
+    vertical-align: middle;
+}
+
+tbody .contributor-cell {
+    display: flex;
+    align-items: center;
+    /* Ensure no weird text wrapping */
+    white-space: nowrap;
+}
+
+tbody .contributor-cell img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 0.75rem;
+    display: inline-block; /* Ensure display */
+    vertical-align: middle; /* Align nicely with text */
+    object-fit: cover; /* In case real images are used later */
+    flex-shrink: 0; /* Prevent shrinking in flex container */
+    background-color: #eee; /* Placeholder bg if image fails */
+}
+
+/* Style for the embedded SVG container */
+tbody .contributor-cell .avatar-svg-container {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 0.75rem;
+    display: inline-block;
+    vertical-align: middle;
+    overflow: hidden; /* Ensure rect doesn't exceed rounded border */
+    flex-shrink: 0;
+}
+
+tbody .contributor-cell .avatar-svg-container svg {
+    display: block; /* Remove extra space below SVG */
+    width: 100%;
+    height: 100%;
+}
+
+tbody .contributor-cell span {
+    display: inline-block; /* Ensure span is treated as block for layout */
+}
+
+tbody .additions {
+    color: #16a34a; /* green-600 */
+}
+
+tbody .deletions {
+    color: #dc2626; /* red-600 */
+}
+
+/* Placeholder Content Styling */
+.placeholder-content {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background-color: #f9fafb; /* gray-50 */
+    border-radius: var(--border-radius-md);
+    border: 1px dashed var(--border-color);
+}
+
+.health-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+}
+
+.health-card {
+    background-color: var(--background-color);
+    padding: 1rem;
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--box-shadow-soft);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Add transition */
+    position: relative; /* Needed for z-index */
+}
+
+.health-card:hover {
+    transform: scale(1.1); /* Scale up card */
+    box-shadow: var(--box-shadow-hover);
+    z-index: 5; /* Bring card to front */
+}
+
+.health-card h4 {
+    margin: 0 0 0.75rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.health-card .metric {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--secondary-dark);
+    margin: 0 0 0.25rem 0;
+}
+.health-card .unit {
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: var(--text-color);
+}
+
+.health-card .trend {
+    font-size: 0.8rem;
+    margin: 0 0 1rem 0;
+}
+.health-card .trend.up { color: #16a34a; } /* green-600 */
+.health-card .trend.down { color: #dc2626; } /* red-600 */
+.health-card .trend.stable { color: #6b7280; } /* gray-500 */
+
+.health-card .mini-chart {
+    height: 60px;
+    background-color: #f0f0f0;
+    border-radius: var(--border-radius-sm);
+    display: flex; 
+    align-items: flex-end;
+    justify-content: space-around;
+    padding: 5px;
+    overflow: hidden;
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Scale up mini-chart when parent card is hovered */
+.health-card:hover .mini-chart {
+    transform: scale(1.3);
+}
+
+.mini-chart::after {
+    content: none !important; /* Ensure no placeholder text */
+}
+
+.mini-bar {
+    display: inline-block;
+    background-color: var(--primary-light);
+    width: 15%; /* Relative width */
+    border-radius: 2px 2px 0 0;
+    transform-origin: bottom;
+    /* animation: growHeight 0.8s ease-out 0.5s forwards; // Temporarily remove animation */
+    /* opacity: 0; */ /* Start hidden for animation */
+    opacity: 1 !important; /* FORCE VISIBLE for debug */
+    /* animation-fill-mode: forwards; */ 
+}
+
+.mini-chart.branch-chart .mini-bar {
+    background-color: var(--secondary-light);
+}
+
+/* Horizontal Bar Chart Styles */
+.mini-chart.pr-chart {
+    align-items: center; /* Center horizontal bar vertically */
+    padding: 5px 10px;
+}
+.h-bar-outer {
+    width: 100%;
+    height: 12px;
+    background-color: var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+}
+.h-bar-inner {
+    height: 100%;
+    background-color: var(--secondary-color);
+    border-radius: 6px;
+    transform-origin: left;
+    animation: growWidth 1s ease-out 0.5s forwards; /* Animation */
+    transform: scaleX(0); /* Start at 0 width */
+}
+
+@keyframes growWidth {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+}
+
+/* Line Chart Styles */
+.mini-chart.complexity-chart {
+    padding: 0;
+    align-items: stretch; /* Allow SVG to fill */
+}
+
+.mini-chart.complexity-chart svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* SETTINGS TAB STYLES - RESTORED */
+.settings-layout {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.settings-section {
+    background-color: var(--background-color);
+    padding: 1.5rem;
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--box-shadow-soft);
+}
+
+.settings-section h4 {
+    margin: 0 0 1rem 0;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+    font-size: 1.1rem;
+    color: var(--primary-dark);
+}
+
+.settings-section label {
+    display: block;
+    margin-bottom: 0.75rem;
+    cursor: pointer;
+    color: var(--text-color);
+}
+
+.settings-section input[type="checkbox"] {
+    margin-right: 0.5rem;
+    accent-color: var(--primary-color);
+    transform: scale(1.1);
+    vertical-align: middle;
+}
+
+.settings-section button,
+.settings-section a {
+    display: inline-block;
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--border-radius-sm);
+    text-decoration: none;
+    margin-top: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.settings-section .btn-disconnect {
+    background: none;
+    border: 1px solid #ef4444; /* red-500 */
+    color: #ef4444;
+    margin-left: 0.5rem;
+}
+.settings-section .btn-disconnect:hover {
+    background-color: #fee2e2; /* red-100 */
+}
+
+.settings-section .btn-connect {
+    background-color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    color: white;
+}
+.settings-section .btn-connect:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+
+.settings-section a {
+    color: var(--primary-color);
+}
+.settings-section a:hover {
+    text-decoration: underline;
+}
+
+.settings-section p {
+    margin: 0 0 0.5rem 0;
+    color: var(--text-color);
+    font-size: 0.95rem;
+}
+
+.settings-section .access-level {
+    font-weight: 600;
+    color: var(--primary-dark);
+    background-color: #f5f3ff; /* violet-50 */
+    padding: 0.1rem 0.4rem;
+    border-radius: var(--border-radius-sm);
+    font-size: 0.9rem;
+}
+/* END SETTINGS TAB STYLES */
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .header h1 {
+        margin-bottom: 1rem;
+    }
+    .search-container input {
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .navigation ul {
+        flex-wrap: wrap;
+    }
+    .chart {
+        height: 200px;
+    }
+    .chart .bar {
+        width: 25px;
+    }
+}
+
+@media (max-width: 600px) {
+    .container {
+        padding: 1rem;
+    }
+    .header h1 {
+        font-size: 2rem;
+    }
+    .stat-card p {
+        font-size: 1.5rem;
+    }
+    .chart .bar {
+        width: 15px;
+    }
+}
+
+/* Tooltip Styling */
+.commit-tooltip {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    z-index: 20;
+    /* Position adjustments will be done by JS */
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none; /* Don't interfere with mouse */
+    transform: translateX(-50%); /* Center horizontally */
+}
+
+.commit-tooltip.visible {
+    opacity: 1;
+}
+
+/* Mini Chart Tooltip Styling */
+.mini-chart-tooltip {
+    position: fixed; /* Use fixed to position relative to viewport */
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    z-index: 30; /* Above other elements */
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none; 
+    transform: translateX(-50%); /* Center horizontally */
+    will-change: top, left, opacity; /* Hint for performance */
+}
+
+.mini-chart-tooltip.visible {
+    opacity: 1;
+} 
